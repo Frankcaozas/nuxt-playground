@@ -8,15 +8,23 @@ function toggleDark() {
 </script>
 
 <template>
-  <div text='red'>
+  <div grid="~ cols-[1fr_2fr]" h-full>
+    <div border="r base">
+      doc
+      <button @click="toggleDark">
+        {{ colorMode.value }}
+      </button>
+    </div>
+    <div>
+      playground
+    </div>
+  </div>
+  <!-- <div text='red'>
     hello world
 
     <br />
 
     {{ x }} {{ y }}
 
-    <button @click="toggleDark">
-      {{ colorMode.value }}
-    </button>
-  </div>
+  </div> -->
 </template>

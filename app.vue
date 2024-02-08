@@ -4,7 +4,9 @@ import '@unocss/reset/tailwind.css'
 
 <template>
   <div>
-    <NuxtPage />
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
   </div>
 </template>
 
