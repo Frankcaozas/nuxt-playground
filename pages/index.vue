@@ -15,9 +15,7 @@ function toggleDark() {
         {{ colorMode.value }}
       </button>
     </div>
-    <div>
-      playground
-    </div>
+    <ThePlayground />
   </div>
   <!-- <div text='red'>
     hello world

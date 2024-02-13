@@ -12,9 +12,11 @@
     "format": "eslint . --fix"
   },
   "dependencies": {
+    "@webcontainer/api": "^1.1.9",
     "nuxt": "^3.10.1",
     "vue": "^3.4.15",
-    "vue-router": "^4.2.5"
+    "vue-router": "^4.2.5",
+    "xterm": "^5.3.0"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.6.4",
