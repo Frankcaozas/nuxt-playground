@@ -11,9 +11,6 @@ function toggleDark() {
   <div grid="~ cols-[1fr_2fr]" h-full>
     <div border="r base">
       doc
-      <button @click="toggleDark">
-        {{ colorMode.value }}
-      </button>
     </div>
     <ThePlayground />
   </div>

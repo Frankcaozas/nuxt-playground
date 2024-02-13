@@ -7,6 +7,7 @@
     <div i-logos-nuxt-icon text-4xl />
     <span text-2xl>learn.nuxt.com</span>
     <div flex-auto />
+    <ToggleTheme />
     <NuxtLink p2 rounded hover="bg-active" href="https://github.com/" target="_blank">
       <div i-carbon-logo-github />
     </NuxtLink>
