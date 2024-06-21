@@ -48,9 +48,15 @@ async function startDevServer() {
     status.value = 'error'
     throw new Error('Unable to run npm install')
   }
-
+  status.value =  'start'
   const runningProcess = await wc.spawn('npm', ['run', 'dev'])
   output.value = runningProcess.output
+
+  if(import.meta.hot){
+    import.meta.hot.accept(() => {
+      runningProcess.kill()
+    })
+  }
 }
 
 watchEffect(() => {
