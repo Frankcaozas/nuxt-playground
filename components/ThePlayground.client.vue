@@ -1,63 +1,70 @@
 <script setup lang="ts">
+import type { FileSystemTree } from '@webcontainer/api'
+
 const iframe = ref<HTMLIFrameElement>()
-  type Status = 'init' | 'mount' | 'install' | 'start' | 'ready' | 'error'
+const wcUrl = ref<string>()
+
+type Status = 'init' | 'mount' | 'install' | 'start' | 'ready' | 'error'
 
 const status = ref<Status>('init')
+const error = shallowRef<{ message: string }>()
 
-const wcUrl = ref<string>('')
-const output = ref<ReadableStream>()
+const stream = ref<ReadableStream>()
 
 async function startDevServer() {
-  const rawFiles = import.meta.glob([
-    '../templates/basic/*.*',
-    '!**/node_modules/**',
-  ], {
-    as: 'raw',
-    eager: true,
-  })
-
-  const files = Object.fromEntries(
-    Object.entries(rawFiles).map(([path, content]) => {
-      return [path.replace('../templates/basic/', ''), {
-        file: {
-          contents: content,
-        },
-      }]
+  const tree = globFilesToWebContainerFs(
+    '../templates/nitro/',
+    import.meta.glob([
+      '../templates/nitro/**/*.*',
+      '!**/node_modules/**',
+    ], {
+      as: 'raw',
+      eager: true,
     }),
   )
-  console.log(files)
-  status.value = 'init'
-  const wc =  await useWebContaienrr()
+
+  const wc = await useWebContaienr()
+
   wc.on('server-ready', (port, url) => {
-    wcUrl.value = url
     status.value = 'ready'
+    wcUrl.value = url
   })
-  wc.on('error', () => {
+
+  wc.on('error', (err) => {
     status.value = 'error'
+    error.value = err
   })
 
-  await wc.mount(files)
+  status.value = 'mount'
+  await wc.mount(tree)
+
   status.value = 'install'
-  const installProcess = await wc.spawn('npm', ['install'])
 
-  output.value = installProcess.output
-
+  const installProcess = await wc.spawn('pnpm', ['install'])
+  stream.value = installProcess.output
   const installExitCode = await installProcess.exit
 
   if (installExitCode !== 0) {
     status.value = 'error'
+    error.value = {
+      message: `Unable to run npm install, exit as ${installExitCode}`,
+    }
     throw new Error('Unable to run npm install')
   }
-  status.value =  'start'
-  const runningProcess = await wc.spawn('npm', ['run', 'dev'])
-  output.value = runningProcess.output
 
-  if(import.meta.hot){
+  status.value = 'start'
+  const devProcess = await wc.spawn('pnpm', ['run', 'dev'])
+  stream.value = devProcess.output
+
+  // In dev, when doing HMR, we kill the previous process while reusing the same WebContainer
+  if (import.meta.hot) {
     import.meta.hot.accept(() => {
-      runningProcess.kill()
+      devProcess.kill()
     })
   }
 }
+
+
 
 watchEffect(() => {
   if (iframe.value && wcUrl.value)
@@ -74,6 +81,6 @@ onMounted(startDevServer)
       <div i-svg-spinners-90-ring-with-bg />
       {{ status }}ing...
     </div>
-    <Terminal :stream="output" />
+    <Terminal :stream="stream" />
   </div>
 </template>

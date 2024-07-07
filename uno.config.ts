@@ -2,6 +2,7 @@ import {
   defineConfig,
   presetAttributify,
   presetIcons,
+  presetTypography,
   presetUno,
   presetWebFonts,
   transformerDirectives,
@@ -19,6 +20,7 @@ export default defineConfig({
         mono: 'DM Mono',
       },
     }),
+    presetTypography(),
   ],
   shortcuts: {
     'border-base': 'border-gray:300 dark:border-gray:600',
