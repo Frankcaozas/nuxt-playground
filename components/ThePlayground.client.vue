@@ -26,7 +26,10 @@ async function startDevServer() {
   const wc = await useWebContaienr()
 
   wc.on('server-ready', (port, url) => {
-    status.value = 'ready'
+    // Nuxt listen to multiple ports, and 'server-ready' is emitted for each of them
+    // We need the main one
+    if (port === 3000)
+      status.value = 'ready'
     wcUrl.value = url
   })
 
@@ -63,8 +66,6 @@ async function startDevServer() {
     })
   }
 }
-
-
 
 watchEffect(() => {
   if (iframe.value && wcUrl.value)

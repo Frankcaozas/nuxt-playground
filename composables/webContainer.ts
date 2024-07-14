@@ -1,4 +1,5 @@
-import { WebContainer, type FileSystemTree } from '@webcontainer/api'
+import type { FileSystemTree } from '@webcontainer/api'
+import { WebContainer } from '@webcontainer/api'
 
 let webcontainerInstance: WebContainer
 
